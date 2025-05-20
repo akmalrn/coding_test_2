@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Author;
+use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class BookController extends Controller
 {
@@ -100,25 +103,25 @@ class BookController extends Controller
     public function getBooksByAuthorName(Request $request): JsonResponse
     {
         $author_id = $request->query('author_id');
-    
+
         if (!$author_id) {
             return response()->json([
                 'message' => 'Parameter author_id diperlukan.'
-            ], 400); 
+            ], 400);
         }
-    
+
         $author = Author::find($author_id);
-    
+
         if (!$author) {
             return response()->json([
                 'message' => 'Penulis tidak ditemukan.'
             ], 404);
         }
-    
+
         $books = Book::where('author_id', $author_id)
             ->with('author')
             ->paginate(10);
-    
+
         return response()->json($books);
     }
 }
