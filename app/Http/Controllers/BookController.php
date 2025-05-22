@@ -16,24 +16,24 @@ class BookController extends Controller
 
         $books = Book::query()->with('author');
 
-        if ($query) {
-            $books->where('title', 'like', "%$query%")
-                ->orWhere('isbn', 'like', "%$query%");
-        }
-
         if ($author_id) {
             $books->where('author_id', $author_id);
         }
 
-        $books = $books->paginate(10)->appends([
-            'query' => $query,
-            'author_id' => $author_id
-        ]);
+        if ($query) {
+            $books->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%$query%")
+                    ->orWhere('isbn', 'like', "%$query%");
+            });
+        }
 
+        $books = $books->paginate(10)->appends($request->all());
         $authors = Author::all();
 
         return view('books.index', compact('books', 'authors'));
     }
+
+
 
     public function store(Request $request)
     {

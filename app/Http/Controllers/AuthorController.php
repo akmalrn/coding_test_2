@@ -25,7 +25,7 @@ class AuthorController extends Controller
 
         $author = Author::create($validated);
 
-        return redirect()->route('authors.index')->with('success', 'Penulis berhasil ditambahkan.');
+        return redirect()->route('authors.index')->with('success', 'Author has been added successfully.');
     }
 
     public function show($id)
@@ -34,7 +34,7 @@ class AuthorController extends Controller
 
         if (!$author) {
             return response()->json([
-                'message' => 'Penulis tidak ditemukan.'
+                'message' => "Author with id: $id not found."
             ], 404);
         }
 
@@ -49,7 +49,7 @@ class AuthorController extends Controller
         $author = Author::find($id);
 
         if (!$author) {
-            return redirect()->route('authors.index')->with('error', 'Penulis tidak ditemukan.');
+            return redirect()->route('authors.index')->with('error', "Author with id: $id not found.");
         }
 
         $validated = $request->validate([
@@ -59,7 +59,7 @@ class AuthorController extends Controller
 
         $author->update($validated);
 
-        return redirect()->route('authors.index')->with('success', 'Penulis berhasil diperbarui.');
+        return redirect()->route('authors.index')->with('success', 'Author has been updated successfully.');
     }
 
     public function destroy($id)
@@ -68,32 +68,35 @@ class AuthorController extends Controller
 
         if (!$author) {
             return response()->json([
-                'message' => 'Penulis tidak ditemukan.'
+                'message' => "Author with id: $id not found."
             ], 404);
         }
 
         $author->delete();
 
         return response()->json([
-            'message' => 'Penulis berhasil dihapus.'
-        ]);
+            'message' => 'Author has been deleted successfully.'
+        ], 200);
     }
 
-    public function searchById(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('query');
 
-        $authors = Author::where('id', 'like', "%{$query}%")->get();
+        $authors = Author::where('id', 'like', "%{$query}%")
+            ->orWhere('first_name', 'like', "%{$query}%")
+            ->orWhere('last_name', 'like', "%{$query}%")
+            ->get();
 
         if ($authors->isEmpty()) {
             return response()->json([
-                'message' => 'Penulis tidak ditemukan.'
+                'message' => 'No authors found matching your search.'
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Penulis ditemukan.',
+            'message' => 'Authors found.',
             'data' => $authors
-        ]);
+        ], 200);
     }
 }
