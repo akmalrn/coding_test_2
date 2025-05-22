@@ -9,28 +9,25 @@
     </div>
 
     <div class="d-flex gap-3 mb-3">
-        <div class="row d-flex gap-3 flex-wrap mb-3">
-            <!-- Form Pencarian Buku Berdasarkan Kata Kunci / ISBN buku -->
-            <div class="col-md-6">
+        <div class="flex-fill" style="min-width: 250px;">
+            <form action="{{ route('books.search.by.author') }}" method="GET" class="d-flex">
+                <select name="author_id" id="authorSelect" class="form-select me-2" required>
+                    <option value="">Pilih Penulis</option>
+                    @foreach ($authors as $author)
+                        <option value="{{ $author->id }}" {{ request('author_id') == $author->id ? 'selected' : '' }}>
+                            {{ $author->first_name . ' ' . $author->last_name }}
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit" class="btn btn-success">Search Books</button>
+            </form>
+        </div>
+        <div class="d-flex flex-wrap gap-3 mb-3">
+            <div class="flex-fill" style="min-width: 250px;">
                 <form action="{{ route('books.search') }}" method="GET" class="d-flex">
                     <input type="text" name="query" id="searchInput" class="form-control me-2"
                         placeholder="Search books..." value="{{ request('query') }}" required>
                     <button type="submit" class="btn btn-primary">Search</button>
-                </form>
-            </div>
-
-            <!-- Form Pencarian Buku Berdasarkan Penulis -->
-            <div class="col-md-6">
-                <form action="{{ route('books.search.by.author') }}" method="GET" class="d-flex">
-                    <select name="author_id" id="authorSelect" class="form-select me-2" required>
-                        <option value="">Pilih Penulis</option>
-                        @foreach ($authors as $author)
-                            <option value="{{ $author->id }}" {{ request('author_id') == $author->id ? 'selected' : '' }}>
-                                {{ $author->first_name . ' ' . $author->last_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn-success">Search Books</button>
                 </form>
             </div>
         </div>

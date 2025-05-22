@@ -62,21 +62,10 @@ class AuthorController extends Controller
         return redirect()->route('authors.index')->with('success', 'Author has been updated successfully.');
     }
 
-    public function destroy($id)
+     public function destroy(Author $author)
     {
-        $author = Author::find($id);
-
-        if (!$author) {
-            return response()->json([
-                'message' => "Author with id: $id not found."
-            ], 404);
-        }
-
         $author->delete();
-
-        return response()->json([
-            'message' => 'Author has been deleted successfully.'
-        ], 200);
+        return redirect()->route('authors.index')->with('success', 'Author berhasil dihapus.');
     }
 
     public function search(Request $request)
